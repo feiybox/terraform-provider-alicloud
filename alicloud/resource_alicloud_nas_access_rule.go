@@ -32,7 +32,7 @@ func resourceAlicloudNasAccessRule() *schema.Resource {
 			},
 			"source_cidr_ip": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"rw_access_type": {
 				Type:         schema.TypeString,
@@ -56,6 +56,18 @@ func resourceAlicloudNasAccessRule() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"file_system_type": {
+            				Type:         schema.TypeString,
+            				Optional:     true,
+            				ForceNew:     true,
+            				ValidateFunc: validation.StringInSlice([]string{"extreme", "standard"}, false),
+            				Default:      "standard",
+            },
+            "ipv6_source_cidr_ip": {
+            				Type:     schema.TypeString,
+            				Optional: true,
+            				ConflictsWith: []string{"source_cidr_ip"},
+            },
 		},
 	}
 }
@@ -71,14 +83,29 @@ func resourceAlicloudNasAccessRuleCreate(d *schema.ResourceData, meta interface{
 	}
 	request["RegionId"] = client.Region
 	request["AccessGroupName"] = d.Get("access_group_name")
-	request["SourceCidrIp"] = d.Get("source_cidr_ip")
+
 	if v, ok := d.GetOk("rw_access_type"); ok && v.(string) != "" {
 		request["RWAccessType"] = v
 	}
 	if v, ok := d.GetOk("user_access_type"); ok && v.(string) != "" {
 		request["UserAccessType"] = v
 	}
+	if v, ok := d.GetOk("source_cidr_ip"); ok && v.(string) != "" {
+    		request["SourceCidrIp"] = d.Get("source_cidr_ip")
+    }
+    if v, ok := d.GetOk("ipv6_source_cidr_ip"); ok && v.(string) != ""  {
+        		request["Ipv6SourceCidrIp"] = d.Get("ipv6_source_cidr_ip")
+     }
+
+     Ipv6SourceCidrIp, ok1 := d.GetOk("ipv6_source_cidr_ip")
+     SourceCidrIp, ok2 := d.GetOk("source_cidr_ip")
+     if ok1 && ok2 && Ipv6SourceCidrIp.(string) != "" && SourceCidrIp.(string) != ""  {
+            return WrapError(fmt.Errorf("you must specify one of the following field: source_cidr_ip,ipv6_source_cidr_ip"))
+     }
+
 	request["Priority"] = d.Get("priority")
+	request["FileSystemType"] = d.Get("file_system_type")
+
 	wait := incrementalWait(3*time.Second, 3*time.Second)
 	err = resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 		response, err = conn.DoRequest(StringPointer(action), nil, StringPointer("POST"), StringPointer("2017-06-26"), StringPointer("AK"), nil, request, &util.RuntimeOptions{})
@@ -95,7 +122,7 @@ func resourceAlicloudNasAccessRuleCreate(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return WrapErrorf(err, DefaultErrorMsg, "alicloud_nas_access_rule", action, AlibabaCloudSdkGoERROR)
 	}
-	d.SetId(fmt.Sprint(request["AccessGroupName"], ":", response["AccessRuleId"]))
+	d.SetId(fmt.Sprint(request["AccessGroupName"], ":", request["FileSystemType"], ":", response["AccessRuleId"]))
 	return resourceAlicloudNasAccessRuleRead(d, meta)
 }
 
@@ -106,7 +133,7 @@ func resourceAlicloudNasAccessRuleUpdate(d *schema.ResourceData, meta interface{
 		return WrapError(err)
 	}
 	var response map[string]interface{}
-	parts, err := ParseResourceId(d.Id(), 2)
+	parts, err := ParseResourceId(d.Id(), 3)
 	if err != nil {
 		err = WrapError(err)
 		return err
@@ -114,14 +141,11 @@ func resourceAlicloudNasAccessRuleUpdate(d *schema.ResourceData, meta interface{
 	request := map[string]interface{}{
 		"RegionId":        client.RegionId,
 		"AccessGroupName": parts[0],
-		"AccessRuleId":    parts[1],
+		"AccessRuleId":    parts[2],
+		"FileSystemType":  parts[1],
 	}
 
 	update := false
-	if d.HasChange("source_cidr_ip") {
-		update = true
-	}
-	request["SourceCidrIp"] = d.Get("source_cidr_ip")
 
 	if d.HasChange("rw_access_type") {
 		update = true
@@ -137,6 +161,15 @@ func resourceAlicloudNasAccessRuleUpdate(d *schema.ResourceData, meta interface{
 		update = true
 	}
 	request["Priority"] = d.Get("priority")
+
+    if v, ok := d.GetOk("ipv6_source_cidr_ip"); ok && v.(string) != ""  {
+        update = true
+        request["Ipv6SourceCidrIp"] = d.Get("ipv6_source_cidr_ip")
+     }
+     if v, ok := d.GetOk("source_cidr_ip"); ok && v.(string) != "" {
+         update = true
+         request["SourceCidrIp"] = d.Get("source_cidr_ip")
+     }
 
 	if update {
 		action := "ModifyAccessRule"
@@ -172,16 +205,18 @@ func resourceAlicloudNasAccessRuleRead(d *schema.ResourceData, meta interface{})
 		}
 		return WrapError(err)
 	}
-	parts, err := ParseResourceId(d.Id(), 2)
+	parts, err := ParseResourceId(d.Id(), 3)
 	if err != nil {
 		return WrapError(err)
 	}
-	d.Set("access_rule_id", object["AccessRuleId"])
+	d.Set("access_rule_id", parts[2])
 	d.Set("source_cidr_ip", object["SourceCidrIp"])
 	d.Set("access_group_name", parts[0])
 	d.Set("priority", formatInt(object["Priority"]))
 	d.Set("rw_access_type", object["RWAccess"])
 	d.Set("user_access_type", object["UserAccess"])
+	d.Set("ipv6_source_cidr_ip", object["Ipv6SourceCidrIp"])
+	d.Set("file_system_type", parts[1])
 
 	return nil
 }
@@ -194,7 +229,7 @@ func resourceAlicloudNasAccessRuleDelete(d *schema.ResourceData, meta interface{
 	if err != nil {
 		return WrapError(err)
 	}
-	parts, err := ParseResourceId(d.Id(), 2)
+	parts, err := ParseResourceId(d.Id(), 3)
 	if err != nil {
 		err = WrapError(err)
 		return err
@@ -202,7 +237,8 @@ func resourceAlicloudNasAccessRuleDelete(d *schema.ResourceData, meta interface{
 	request := map[string]interface{}{
 		"RegionId":        client.RegionId,
 		"AccessGroupName": parts[0],
-		"AccessRuleId":    parts[1],
+		"AccessRuleId":    parts[2],
+		"FileSystemType":  parts[1],
 	}
 
 	wait := incrementalWait(3*time.Second, 3*time.Second)

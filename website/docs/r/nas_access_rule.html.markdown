@@ -24,6 +24,7 @@ resource "alicloud_nas_access_group" "foo" {
   access_group_name = "tf-NasConfigName"
   access_group_type = "Vpc"
   description       = "tf-testAccNasConfig"
+  file_system_type  = "extreme"
 }
 
 resource "alicloud_nas_access_rule" "foo" {
@@ -32,8 +33,17 @@ resource "alicloud_nas_access_rule" "foo" {
   rw_access_type    = "RDWR"
   user_access_type  = "no_squash"
   priority          = 2
+  file_system_type  = "extreme"
 }
 
+resource "alicloud_nas_access_rule" "foo1" {
+  access_group_name   = alicloud_nas_access_group.foo.access_group_name
+  ipv6_source_cidr_ip = "::1"
+  rw_access_type      = "RDWR"
+  user_access_type    = "no_squash"
+  priority            = 2
+  file_system_type    = "extreme"
+}
 
 ```
 
@@ -46,6 +56,9 @@ The following arguments are supported:
 * `rw_access_type` - (Optional) Read-write permission type: `RDWR` (default), `RDONLY`.
 * `user_access_type` - (Optional) User permission type: `no_squash` (default), `root_squash`, `all_squash`.
 * `priority` - (Optional) Priority level. Range: 1-100. Default value: `1`.
+* `file_system_type` - (Optional) The type of the file system: `standard ` (default), `extreme`.
+* `ipv6_source_cidr_ip` - (Optional) The IPv6 address or CIDR block of the authorized object.
+                                     You must set this parameter to an IPv6 address or CIDR block.
 
 ## Attributes Reference
 

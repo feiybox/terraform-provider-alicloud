@@ -7,6 +7,7 @@ import (
 	util "github.com/alibabacloud-go/tea-utils/service"
 	"github.com/aliyun/terraform-provider-alicloud/alicloud/connectivity"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func dataSourceAlicloudAccessRules() *schema.Resource {
@@ -31,6 +32,17 @@ func dataSourceAlicloudAccessRules() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"ipv6_source_cidr_ip": {
+                Type:     schema.TypeString,
+                Optional: true,
+                ConflictsWith: []string{"source_cidr_ip"},
+            },
+			"file_system_type": {
+                Type:         schema.TypeString,
+                Optional:     true,
+                ForceNew:     true,
+                ValidateFunc: validation.StringInSlice([]string{"extreme", "standard"}, false),
+             },
 			"ids": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -67,6 +79,10 @@ func dataSourceAlicloudAccessRules() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
+                        "ipv6_source_cidr_ip": {
+                            Type:     schema.TypeString,
+                            Computed: true,
+                        },
 					},
 				},
 			},
@@ -79,6 +95,7 @@ func dataSourceAlicloudAccessRulesRead(d *schema.ResourceData, meta interface{})
 	action := "DescribeAccessRules"
 	request := make(map[string]interface{})
 	request["AccessGroupName"] = d.Get("access_group_name")
+    request["FileSystemType"] = d.Get("file_system_type")
 	request["RegionId"] = client.Region
 	request["PageSize"] = PageSizeLarge
 	request["PageNumber"] = 1
@@ -122,6 +139,9 @@ func dataSourceAlicloudAccessRulesRead(d *schema.ResourceData, meta interface{})
 			if v, ok := d.GetOk("rw_access"); ok && v.(string) != "" && item["RWAccess"].(string) != v.(string) {
 				continue
 			}
+			if v, ok := d.GetOk("ipv6_source_cidr_ip"); ok && v.(string) != "" && item["Ipv6SourceCidrIp"].(string) != v.(string) {
+            	continue
+            }
 			if len(idsMap) > 0 {
 				if _, ok := idsMap[fmt.Sprint(item["AccessRuleId"])]; !ok {
 					continue
@@ -143,6 +163,7 @@ func dataSourceAlicloudAccessRulesRead(d *schema.ResourceData, meta interface{})
 			"access_rule_id": object["AccessRuleId"],
 			"user_access":    object["UserAccess"],
 			"rw_access":      object["RWAccess"],
+			"ipv6_source_cidr_ip": object["Ipv6SourceCidrIp"],
 		}
 		ids = append(ids, fmt.Sprint(object["AccessRuleId"]))
 		s = append(s, mapping)
