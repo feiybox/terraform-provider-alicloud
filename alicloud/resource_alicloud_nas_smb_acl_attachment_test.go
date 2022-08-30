@@ -58,11 +58,6 @@ func TestAccAlicloudNASSmbAclAttachment_basic0(t *testing.T) {
 				),
 			},
 			{
-				ResourceName:      resourceId,
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-			{
 				Config: testAccConfig(map[string]interface{}{
 					"enable_anonymous_access": "true",
 				}),
@@ -118,8 +113,6 @@ func TestAccAlicloudNASSmbAclAttachment_basic0(t *testing.T) {
 
 var AlicloudNASSmbAclMap0 = map[string]string{
 	"file_system_id":  CHECKSET,
-	"keytab":          CHECKSET,
-	"keytab_md5":      CHECKSET,
 	"auth_method":     CHECKSET,
 	"enabled":         CHECKSET,
 	"super_admin_sid": CHECKSET,

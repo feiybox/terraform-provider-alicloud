@@ -12,14 +12,14 @@ description: |-
 Provides a Nas Smb Acl resource.
 
 Alibaba Cloud SMB protocol file storage service supports user authentication based on AD domain system and permission access control at the file system level. Connecting and accessing the SMB file system as a domain user can implement the requirements for access control at the file and directory level in the SMB protocol file system. The current Alibaba Cloud SMB protocol file storage service does not support multi-user file and directory-level permission access control, and only provides file system-level authentication and access based on the whitelist mechanism that supports cloud accounts and source IP permission groups control.
--> **NOTE:** Available in v1.34.0+.
+-> **NOTE:** Available in 1.185.0+.
 
 ## Example Usage
 
 Basic Usage
 
 ```terraform
-resource "alicloud_nas_file_system" "example" { 
+resource "alicloud_nas_file_system" "example" {
   protocol_type    = "SMB"
   storage_type     = "Performance"
   file_system_type = "standard"
@@ -66,7 +66,7 @@ The following arguments are supported:
 
 The following attributes are exported:
 
-* `id` - This ID of this resource. The value is formate as `<file_system_id>:<keytab>:<keytab_md5>`.
+* `id` - This ID of this resource. The value is formate as `<file_system_id>`.
 * `enabled` - Specifies whether to enable the ACL feature.
                   true: enables the ACL feature.
                   false: disables the ACL feature.
@@ -74,9 +74,6 @@ The following attributes are exported:
 
 ## Import
 
-Nas Smb Acl can be imported using the id, e.g.
+Nas Smb Acl not can be imported using the id.
 
-```
-$ terraform import alicloud_nas_smb_acl_attachment.example <file_system_id>:<keytab>:<keytab_md5>
-```
 
