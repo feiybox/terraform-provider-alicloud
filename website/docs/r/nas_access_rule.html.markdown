@@ -52,7 +52,7 @@ resource "alicloud_nas_access_rule" "foo1" {
 The following arguments are supported:
 
 * `access_group_name` - (Required, ForceNew) Permission group name.
-* `source_cidr_ip` - (Required) Address or address segment.
+* `source_cidr_ip` - (Optional) Address or address segment.
 * `rw_access_type` - (Optional) Read-write permission type: `RDWR` (default), `RDONLY`.
 * `user_access_type` - (Optional) User permission type: `no_squash` (default), `root_squash`, `all_squash`.
 * `priority` - (Optional) Priority level. Range: 1-100. Default value: `1`.
