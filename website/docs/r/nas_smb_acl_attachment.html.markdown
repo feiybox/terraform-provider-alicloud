@@ -19,7 +19,7 @@ Alibaba Cloud SMB protocol file storage service supports user authentication bas
 Basic Usage
 
 ```terraform
-resource "alicloud_nas_file_system" "example" { 
+resource "alicloud_nas_file_system" "example" {
   protocol_type    = "SMB"
   storage_type     = "Performance"
   file_system_type = "standard"
