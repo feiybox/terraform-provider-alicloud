@@ -347,8 +347,9 @@ func TestUnitAlicloudNASSmbAclAttachment(t *testing.T) {
 			return responseMock["UpdateNormal"]("")
 		})
 		err := resourceAlicloudNasSmbAclAttachmentUpdate(resourceData1, rawClient)
-		fmt.Println("wang")
-		fmt.Println(err)
+		if err != nil {
+			t.Log(err)
+		}
 		patches.Reset()
 		assert.Nil(t, err)
 	})
