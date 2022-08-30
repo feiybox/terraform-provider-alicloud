@@ -6,10 +6,10 @@ import (
 	"time"
 
 	util "github.com/alibabacloud-go/tea-utils/service"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/aliyun/terraform-provider-alicloud/alicloud/connectivity"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 )
 
 func resourceAlicloudNasSmbAclAttachment() *schema.Resource {
@@ -33,39 +33,39 @@ func resourceAlicloudNasSmbAclAttachment() *schema.Resource {
 				Required: true,
 			},
 			"keytab_md5": {
-                Type:     schema.TypeString,
+				Type:     schema.TypeString,
 				Required: true,
 			},
 			"enable_anonymous_access": {
-               Type:     schema.TypeBool,
-               Optional: true,
-            },
-            "encrypt_data": {
-               Type:     schema.TypeBool,
-               Optional: true,
-            },
-            "reject_unencrypted_access": {
-               Type:     schema.TypeBool,
-               Optional: true,
-            },
-            "super_admin_sid": {
-                Type:     schema.TypeString,
-                Optional: true,
-            },
-            "home_dir_path": {
-                Type:     schema.TypeString,
-                Optional: true,
-                ValidateFunc: validation.StringLenBetween(0, 32767),
-            },
-            "enabled": {
-                Type:     schema.TypeString,
-                Computed: true,
-            },
-             "auth_method": {
-                Type:     schema.TypeString,
-                Computed: true,
-            },
-},
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+			"encrypt_data": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+			"reject_unencrypted_access": {
+				Type:     schema.TypeBool,
+				Optional: true,
+			},
+			"super_admin_sid": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"home_dir_path": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validation.StringLenBetween(0, 32767),
+			},
+			"enabled": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"auth_method": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+		},
 	}
 }
 
@@ -110,14 +110,14 @@ func resourceAlicloudNasSmbAclAttachmentUpdate(d *schema.ResourceData, meta inte
 		return WrapError(err)
 	}
 	var response map[string]interface{}
-    parts, err := ParseResourceId(d.Id(), 3)
-    if err != nil {
-        err = WrapError(err)
-        return err
-    }
+	parts, err := ParseResourceId(d.Id(), 3)
+	if err != nil {
+		err = WrapError(err)
+		return err
+	}
 	request := map[string]interface{}{
-		"RegionId":         client.RegionId,
-		"FileSystemId":     parts[0],
+		"RegionId":     client.RegionId,
+		"FileSystemId": parts[0],
 	}
 
 	update := false
@@ -137,26 +137,25 @@ func resourceAlicloudNasSmbAclAttachmentUpdate(d *schema.ResourceData, meta inte
 	}
 	request["EnableAnonymousAccess"] = d.Get("enable_anonymous_access")
 
-    if d.HasChange("encrypt_data") {
-        update = true
-    }
-    request["EncryptData"] = d.Get("encrypt_data")
+	if d.HasChange("encrypt_data") {
+		update = true
+	}
+	request["EncryptData"] = d.Get("encrypt_data")
 
-    if d.HasChange("reject_unencrypted_access") {
-        update = true
-    }
-    request["RejectUnencryptedAccess"] = d.Get("reject_unencrypted_access")
+	if d.HasChange("reject_unencrypted_access") {
+		update = true
+	}
+	request["RejectUnencryptedAccess"] = d.Get("reject_unencrypted_access")
 
-    if d.HasChange("super_admin_sid") {
-        update = true
-    }
-    request["SuperAdminSid"] = d.Get("super_admin_sid")
+	if d.HasChange("super_admin_sid") {
+		update = true
+	}
+	request["SuperAdminSid"] = d.Get("super_admin_sid")
 
-    if d.HasChange("home_dir_path") {
-        update = true
-    }
-    request["HomeDirPath"] = d.Get("home_dir_path")
-
+	if d.HasChange("home_dir_path") {
+		update = true
+	}
+	request["HomeDirPath"] = d.Get("home_dir_path")
 
 	if update {
 		action := "ModifySmbAcl"
@@ -187,13 +186,13 @@ func resourceAlicloudNasSmbAclAttachmentRead(d *schema.ResourceData, meta interf
 	if err != nil {
 		if NotFoundError(err) {
 			log.Printf("[DEBUG] Resource alicloud_nas_smb_acl_attachment nasService.DescribeNasSmbAcl Failed!!! %s",
-			err)
+				err)
 			d.SetId("")
 			return nil
 		}
 		return WrapError(err)
 	}
-    parts, err := ParseResourceId(d.Id(), 3)
+	parts, err := ParseResourceId(d.Id(), 3)
 	if err != nil {
 		return WrapError(err)
 	}
@@ -219,12 +218,12 @@ func resourceAlicloudNasSmbAclAttachmentDelete(d *schema.ResourceData, meta inte
 		return WrapError(err)
 	}
 	parts, err := ParseResourceId(d.Id(), 3)
-    	if err != nil {
-    		return WrapError(err)
-    }
+	if err != nil {
+		return WrapError(err)
+	}
 	request := map[string]interface{}{
-		"RegionId":      client.RegionId,
-		"FileSystemId":  parts[0],
+		"RegionId":     client.RegionId,
+		"FileSystemId": parts[0],
 	}
 
 	wait := incrementalWait(3*time.Second, 3*time.Second)

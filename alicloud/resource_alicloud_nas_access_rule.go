@@ -57,17 +57,17 @@ func resourceAlicloudNasAccessRule() *schema.Resource {
 				Computed: true,
 			},
 			"file_system_type": {
-            				Type:         schema.TypeString,
-            				Optional:     true,
-            				ForceNew:     true,
-            				ValidateFunc: validation.StringInSlice([]string{"extreme", "standard"}, false),
-            				Default:      "standard",
-            },
-            "ipv6_source_cidr_ip": {
-            				Type:     schema.TypeString,
-            				Optional: true,
-            				ConflictsWith: []string{"source_cidr_ip"},
-            },
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ValidateFunc: validation.StringInSlice([]string{"extreme", "standard"}, false),
+				Default:      "standard",
+			},
+			"ipv6_source_cidr_ip": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"source_cidr_ip"},
+			},
 		},
 	}
 }
@@ -91,17 +91,17 @@ func resourceAlicloudNasAccessRuleCreate(d *schema.ResourceData, meta interface{
 		request["UserAccessType"] = v
 	}
 	if v, ok := d.GetOk("source_cidr_ip"); ok && v.(string) != "" {
-    		request["SourceCidrIp"] = d.Get("source_cidr_ip")
-    }
-    if v, ok := d.GetOk("ipv6_source_cidr_ip"); ok && v.(string) != ""  {
-        		request["Ipv6SourceCidrIp"] = d.Get("ipv6_source_cidr_ip")
-     }
+		request["SourceCidrIp"] = d.Get("source_cidr_ip")
+	}
+	if v, ok := d.GetOk("ipv6_source_cidr_ip"); ok && v.(string) != "" {
+		request["Ipv6SourceCidrIp"] = d.Get("ipv6_source_cidr_ip")
+	}
 
-     Ipv6SourceCidrIp, ok1 := d.GetOk("ipv6_source_cidr_ip")
-     SourceCidrIp, ok2 := d.GetOk("source_cidr_ip")
-     if ok1 && ok2 && Ipv6SourceCidrIp.(string) != "" && SourceCidrIp.(string) != ""  {
-            return WrapError(fmt.Errorf("you must specify one of the following field: source_cidr_ip,ipv6_source_cidr_ip"))
-     }
+	Ipv6SourceCidrIp, ok1 := d.GetOk("ipv6_source_cidr_ip")
+	SourceCidrIp, ok2 := d.GetOk("source_cidr_ip")
+	if ok1 && ok2 && Ipv6SourceCidrIp.(string) != "" && SourceCidrIp.(string) != "" {
+		return WrapError(fmt.Errorf("you must specify one of the following field: source_cidr_ip,ipv6_source_cidr_ip"))
+	}
 
 	request["Priority"] = d.Get("priority")
 	request["FileSystemType"] = d.Get("file_system_type")
@@ -162,14 +162,14 @@ func resourceAlicloudNasAccessRuleUpdate(d *schema.ResourceData, meta interface{
 	}
 	request["Priority"] = d.Get("priority")
 
-    if v, ok := d.GetOk("ipv6_source_cidr_ip"); ok && v.(string) != ""  {
-        update = true
-        request["Ipv6SourceCidrIp"] = d.Get("ipv6_source_cidr_ip")
-     }
-     if v, ok := d.GetOk("source_cidr_ip"); ok && v.(string) != "" {
-         update = true
-         request["SourceCidrIp"] = d.Get("source_cidr_ip")
-     }
+	if v, ok := d.GetOk("ipv6_source_cidr_ip"); ok && v.(string) != "" {
+		update = true
+		request["Ipv6SourceCidrIp"] = d.Get("ipv6_source_cidr_ip")
+	}
+	if v, ok := d.GetOk("source_cidr_ip"); ok && v.(string) != "" {
+		update = true
+		request["SourceCidrIp"] = d.Get("source_cidr_ip")
+	}
 
 	if update {
 		action := "ModifyAccessRule"

@@ -1,23 +1,23 @@
 package alicloud
 
 import (
-    "fmt"
-    "os"
-    "reflect"
-    "strconv"
-    "testing"
+	"fmt"
+	"os"
+	"reflect"
+	"strconv"
+	"testing"
 
-    "github.com/agiledragon/gomonkey/v2"
-    "github.com/alibabacloud-go/tea-rpc/client"
-    util "github.com/alibabacloud-go/tea-utils/service"
-    "github.com/alibabacloud-go/tea/tea"
-    "github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-    "github.com/hashicorp/terraform-plugin-sdk/terraform"
-    "github.com/stretchr/testify/assert"
+	"github.com/agiledragon/gomonkey/v2"
+	"github.com/alibabacloud-go/tea-rpc/client"
+	util "github.com/alibabacloud-go/tea-utils/service"
+	"github.com/alibabacloud-go/tea/tea"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"github.com/stretchr/testify/assert"
 
-    "github.com/aliyun/terraform-provider-alicloud/alicloud/connectivity"
-    "github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
-    "github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/aliyun/terraform-provider-alicloud/alicloud/connectivity"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 
 func TestAccAlicloudNASSmbAclAttachment_basic0(t *testing.T) {
@@ -44,16 +44,16 @@ func TestAccAlicloudNASSmbAclAttachment_basic0(t *testing.T) {
 			{
 				Config: testAccConfig(map[string]interface{}{
 					"file_system_id": "${alicloud_nas_file_system.default.id}",
-					"keytab": "BQIAAABHAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAAQAIqIx6v7p11oUAAABHAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAAwAIqIx6v7p11oUAAABPAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAFwAQnQZWB3RAPHU7PMIJyBWePAAAAF8AAgANQUxJQURURVNULkNPTQAEY2lmcwAZc21ic2VydmVyMjQuYWxpYWR0ZXN0LmNvbQAAAAEAAAAAAQASACAGJ7F0s+bcBjf6jD5HlvlRLmPSOW+qDZe0Qk0lQcf8WwAAAE8AAgANQUxJQURURVNULkNPTQAEY2lmcwAZc21ic2VydmVyMjQuYWxpYWR0ZXN0LmNvbQAAAAEAAAAAAQARABDdFmanrSIatnDDhoOXYadj",
-					"keytab_md5": "E3CCF7E2416DF04FA958AA4513EA29E8",
+					"keytab":         "BQIAAABHAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAAQAIqIx6v7p11oUAAABHAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAAwAIqIx6v7p11oUAAABPAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAFwAQnQZWB3RAPHU7PMIJyBWePAAAAF8AAgANQUxJQURURVNULkNPTQAEY2lmcwAZc21ic2VydmVyMjQuYWxpYWR0ZXN0LmNvbQAAAAEAAAAAAQASACAGJ7F0s+bcBjf6jD5HlvlRLmPSOW+qDZe0Qk0lQcf8WwAAAE8AAgANQUxJQURURVNULkNPTQAEY2lmcwAZc21ic2VydmVyMjQuYWxpYWR0ZXN0LmNvbQAAAAEAAAAAAQARABDdFmanrSIatnDDhoOXYadj",
+					"keytab_md5":     "E3CCF7E2416DF04FA958AA4513EA29E8",
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheck(map[string]string{
-                        "file_system_id":                   CHECKSET,
-                        "auth_method":                      "Kerberos",
-                    	"enabled":                          "true",
-                    	"super_admin_sid":                  "",
-                      	"home_dir_path":                    "",
+						"file_system_id":  CHECKSET,
+						"auth_method":     "Kerberos",
+						"enabled":         "true",
+						"super_admin_sid": "",
+						"home_dir_path":   "",
 					}),
 				),
 			},
@@ -63,67 +63,67 @@ func TestAccAlicloudNASSmbAclAttachment_basic0(t *testing.T) {
 				ImportStateVerify: true,
 			},
 			{
-                Config: testAccConfig(map[string]interface{}{
-                   "enable_anonymous_access": "true",
-                }),
-                Check: resource.ComposeTestCheckFunc(
-                    testAccCheck(map[string]string{
-                        "enable_anonymous_access": "true",
-                    }),
-                ),
-            },
-            {
-                Config: testAccConfig(map[string]interface{}{
-                   "encrypt_data": "true",
-                }),
-                Check: resource.ComposeTestCheckFunc(
-                    testAccCheck(map[string]string{
-                        "encrypt_data": "true",
-                    }),
-                ),
-            },
-            {
-                Config: testAccConfig(map[string]interface{}{
-                   "reject_unencrypted_access": "true",
-                }),
-                Check: resource.ComposeTestCheckFunc(
-                    testAccCheck(map[string]string{
-                        "reject_unencrypted_access": "true",
-                    }),
-                ),
-            },
-             {
-                Config: testAccConfig(map[string]interface{}{
-                   "super_admin_sid": "S-1-1-1-2",
-                }),
-                Check: resource.ComposeTestCheckFunc(
-                    testAccCheck(map[string]string{
-                         "super_admin_sid": "S-1-1-1-2",
-                    }),
-                ),
-            },
-             {
-                Config: testAccConfig(map[string]interface{}{
-                   "home_dir_path": "/wang",
-                }),
-                Check: resource.ComposeTestCheckFunc(
-                    testAccCheck(map[string]string{
-                         "home_dir_path": "/wang",
-                    }),
-                ),
-            },
+				Config: testAccConfig(map[string]interface{}{
+					"enable_anonymous_access": "true",
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheck(map[string]string{
+						"enable_anonymous_access": "true",
+					}),
+				),
+			},
+			{
+				Config: testAccConfig(map[string]interface{}{
+					"encrypt_data": "true",
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheck(map[string]string{
+						"encrypt_data": "true",
+					}),
+				),
+			},
+			{
+				Config: testAccConfig(map[string]interface{}{
+					"reject_unencrypted_access": "true",
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheck(map[string]string{
+						"reject_unencrypted_access": "true",
+					}),
+				),
+			},
+			{
+				Config: testAccConfig(map[string]interface{}{
+					"super_admin_sid": "S-1-1-1-2",
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheck(map[string]string{
+						"super_admin_sid": "S-1-1-1-2",
+					}),
+				),
+			},
+			{
+				Config: testAccConfig(map[string]interface{}{
+					"home_dir_path": "/wang",
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheck(map[string]string{
+						"home_dir_path": "/wang",
+					}),
+				),
+			},
 		},
 	})
 }
 
 var AlicloudNASSmbAclMap0 = map[string]string{
-	"file_system_id":                   CHECKSET,
-    "keytab":                           CHECKSET,
-    "keytab_md5":                       CHECKSET,
-	"auth_method":                      CHECKSET,
-	"enabled":                          CHECKSET,
-	"super_admin_sid":                  CHECKSET,
-	"home_dir_path":                    CHECKSET,
+	"file_system_id":  CHECKSET,
+	"keytab":          CHECKSET,
+	"keytab_md5":      CHECKSET,
+	"auth_method":     CHECKSET,
+	"enabled":         CHECKSET,
+	"super_admin_sid": CHECKSET,
+	"home_dir_path":   CHECKSET,
 }
 
 func AlicloudNASSmbAclBasicDependence0(name string) string {
@@ -150,8 +150,8 @@ func TestUnitAlicloudNASSmbAclAttachment(t *testing.T) {
 	dCreate.MarkNewResource()
 	for key, value := range map[string]interface{}{
 		"file_system_id": "file_system_id",
-        "keytab": "BQIAAABHAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAAQAIqIx6v7p11oUAAABHAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAAwAIqIx6v7p11oUAAABPAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAFwAQnQZWB3RAPHU7PMIJyBWePAAAAF8AAgANQUxJQURURVNULkNPTQAEY2lmcwAZc21ic2VydmVyMjQuYWxpYWR0ZXN0LmNvbQAAAAEAAAAAAQASACAGJ7F0s+bcBjf6jD5HlvlRLmPSOW+qDZe0Qk0lQcf8WwAAAE8AAgANQUxJQURURVNULkNPTQAEY2lmcwAZc21ic2VydmVyMjQuYWxpYWR0ZXN0LmNvbQAAAAEAAAAAAQARABDdFmanrSIatnDDhoOXYadj",
-        "keytab_md5": "E3CCF7E2416DF04FA958AA4513EA29E8",
+		"keytab":         "BQIAAABHAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAAQAIqIx6v7p11oUAAABHAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAAwAIqIx6v7p11oUAAABPAAIADUFMSUFEVEVTVC5DT00ABGNpZnMAGXNtYnNlcnZlcjI0LmFsaWFkdGVzdC5jb20AAAABAAAAAAEAFwAQnQZWB3RAPHU7PMIJyBWePAAAAF8AAgANQUxJQURURVNULkNPTQAEY2lmcwAZc21ic2VydmVyMjQuYWxpYWR0ZXN0LmNvbQAAAAEAAAAAAQASACAGJ7F0s+bcBjf6jD5HlvlRLmPSOW+qDZe0Qk0lQcf8WwAAAE8AAgANQUxJQURURVNULkNPTQAEY2lmcwAZc21ic2VydmVyMjQuYWxpYWR0ZXN0LmNvbQAAAAEAAAAAAQARABDdFmanrSIatnDDhoOXYadj",
+		"keytab_md5":     "E3CCF7E2416DF04FA958AA4513EA29E8",
 	} {
 		err := dCreate.Set(key, value)
 		assert.Nil(t, err)
@@ -167,11 +167,11 @@ func TestUnitAlicloudNASSmbAclAttachment(t *testing.T) {
 	rawClient = rawClient.(*connectivity.AliyunClient)
 	ReadMockResponse := map[string]interface{}{
 		"Acl": map[string]interface{}{
-            "file_system_id":   "file_system_id",
-            "auth_method":      "Kerberos",
-            "enabled":          "true",
-            "super_admin_sid":  "",
-            "home_dir_path":    "",
+			"file_system_id":  "file_system_id",
+			"auth_method":     "Kerberos",
+			"enabled":         "true",
+			"super_admin_sid": "",
+			"home_dir_path":   "",
 		},
 	}
 
@@ -282,7 +282,7 @@ func TestUnitAlicloudNASSmbAclAttachment(t *testing.T) {
 	t.Run("UpdateModifySmbAclAbnormal", func(t *testing.T) {
 		diff := terraform.NewInstanceDiff()
 		for _, key := range []string{"keytab", "keytab_md5", "enable_anonymous_access", "reject_unencrypted_access",
-		"encrypt_data", "super_admin_sid", "home_dir_path"} {
+			"encrypt_data", "super_admin_sid", "home_dir_path"} {
 			switch p["alicloud_nas_smb_acl_attachment"].Schema[key].Type {
 			case schema.TypeString:
 				diff.SetAttribute(key, &terraform.ResourceAttrDiff{Old: d.Get(key).(string), New: d.Get(key).(string) + "_update"})
@@ -318,7 +318,7 @@ func TestUnitAlicloudNASSmbAclAttachment(t *testing.T) {
 	t.Run("UpdateModifySmbAclNormal", func(t *testing.T) {
 		diff := terraform.NewInstanceDiff()
 		for _, key := range []string{"keytab", "keytab_md5", "enable_anonymous_access", "reject_unencrypted_access",
-                                     		"encrypt_data", "super_admin_sid", "home_dir_path"} {
+			"encrypt_data", "super_admin_sid", "home_dir_path"} {
 			switch p["alicloud_nas_smb_acl_attachment"].Schema[key].Type {
 			case schema.TypeString:
 				diff.SetAttribute(key, &terraform.ResourceAttrDiff{Old: d.Get(key).(string), New: d.Get(key).(string) + "_update"})
