@@ -58,7 +58,7 @@ The following arguments are supported:
 * `priority` - (Optional) Priority level. Range: 1-100. Default value: `1`.
 * `file_system_type` - (Optional,Available in v1.185.0+) The type of the file system: `standard ` (default), `extreme`.
 * `ipv6_source_cidr_ip` - (Optional,Available in v1.185.0+) The IPv6 address or CIDR block of the authorized object.
-                                     You must set this parameter to an IPv6 address or CIDR block.
+                                     You must set one of "ipv6_source_cidr_ip" and "source_cidr_ip".
 
 ## Attributes Reference
 

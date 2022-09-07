@@ -47,7 +47,7 @@ The following arguments are supported:
 
 The following attributes are exported in addition to the arguments listed above:
 
-* `ids` - A list of rule IDs, Each element set to `access_rule_id` (Each element formats as `<access_group_name>:<access_rule_id>:<access_rule_id>` before 1.53.0).
+* `ids` - A list of rule IDs, Each element set to `access_rule_id` (Each element formats as `<access_group_name>:<access_rule_id>:<file_system_type>` before 1.53.0).
 * `rules` - A list of AccessRules. Each element contains the following attributes:
  * `source_cidr_ip` - SourceCidrIp of the AccessRule.
  * `priority` - Priority of the AccessRule.
