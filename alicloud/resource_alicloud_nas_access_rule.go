@@ -3,8 +3,8 @@ package alicloud
 import (
 	"fmt"
 	"log"
-	"time"
 	"strings"
+	"time"
 
 	util "github.com/alibabacloud-go/tea-utils/service"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
@@ -65,8 +65,8 @@ func resourceAlicloudNasAccessRule() *schema.Resource {
 				Default:      "standard",
 			},
 			"ipv6_source_cidr_ip": {
-				Type:          schema.TypeString,
-				Optional:      true,
+				Type:         schema.TypeString,
+				Optional:     true,
 				ExactlyOneOf: []string{"source_cidr_ip"},
 			},
 		},
@@ -205,11 +205,11 @@ func resourceAlicloudNasAccessRuleRead(d *schema.ResourceData, meta interface{})
 	d.Set("access_group_name", parts[0])
 	d.Set("access_rule_id", parts[1])
 	if len(parts) == 2 {
-    	d.SetId(fmt.Sprintf("%s:%s:%s", parts[0], parts[1], "standard"))
-    	d.Set("file_system_type", "standard")
-    }else {
-        d.Set("file_system_type", parts[2])
-    }
+		d.SetId(fmt.Sprintf("%s:%s:%s", parts[0], parts[1], "standard"))
+		d.Set("file_system_type", "standard")
+	} else {
+		d.Set("file_system_type", parts[2])
+	}
 
 	d.Set("source_cidr_ip", object["SourceCidrIp"])
 	d.Set("priority", formatInt(object["Priority"]))

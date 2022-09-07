@@ -2,9 +2,9 @@ package alicloud
 
 import (
 	"fmt"
-	"time"
-    "strings"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"strings"
+	"time"
 
 	"github.com/PaesslerAG/jsonpath"
 	util "github.com/alibabacloud-go/tea-utils/service"
@@ -144,15 +144,15 @@ func (s *NasService) DescribeNasAccessRule(id string) (object map[string]interfa
 
 	parts := strings.Split(id, ":")
 	request := map[string]interface{}{
-        "RegionId":        s.client.RegionId,
-        "AccessGroupName": parts[0],
-        "AccessRuleId":    parts[1],
-    }
-    if len(parts) == 2 {
-        request["FileSystemType"] = "standard"
-    }else{
-        request["FileSystemType"] = parts[2]
-    }
+		"RegionId":        s.client.RegionId,
+		"AccessGroupName": parts[0],
+		"AccessRuleId":    parts[1],
+	}
+	if len(parts) == 2 {
+		request["FileSystemType"] = "standard"
+	} else {
+		request["FileSystemType"] = parts[2]
+	}
 
 	runtime := util.RuntimeOptions{}
 	runtime.SetAutoretry(true)
