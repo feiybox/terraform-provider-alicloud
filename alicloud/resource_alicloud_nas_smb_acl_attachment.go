@@ -18,9 +18,6 @@ func resourceAlicloudNasSmbAclAttachment() *schema.Resource {
 		Read:   resourceAlicloudNasSmbAclAttachmentRead,
 		Update: resourceAlicloudNasSmbAclAttachmentUpdate,
 		Delete: resourceAlicloudNasSmbAclAttachmentDelete,
-		Importer: &schema.ResourceImporter{
-			State: schema.ImportStatePassthrough,
-		},
 
 		Schema: map[string]*schema.Schema{
 			"file_system_id": {
@@ -99,7 +96,7 @@ func resourceAlicloudNasSmbAclAttachmentCreate(d *schema.ResourceData, meta inte
 	if err != nil {
 		return WrapErrorf(err, DefaultErrorMsg, "alicloud_nas_smb_acl_attachment", action, AlibabaCloudSdkGoERROR)
 	}
-	d.SetId(fmt.Sprint(request["FileSystemId"], ":", request["Keytab"], ":", request["KeytabMd5"]))
+	d.SetId(fmt.Sprint(request["FileSystemId"]))
 	return resourceAlicloudNasSmbAclAttachmentRead(d, meta)
 }
 
@@ -110,14 +107,9 @@ func resourceAlicloudNasSmbAclAttachmentUpdate(d *schema.ResourceData, meta inte
 		return WrapError(err)
 	}
 	var response map[string]interface{}
-	parts, err := ParseResourceId(d.Id(), 3)
-	if err != nil {
-		err = WrapError(err)
-		return err
-	}
 	request := map[string]interface{}{
 		"RegionId":     client.RegionId,
-		"FileSystemId": parts[0],
+		"FileSystemId": d.Id(),
 	}
 
 	update := false
@@ -135,17 +127,23 @@ func resourceAlicloudNasSmbAclAttachmentUpdate(d *schema.ResourceData, meta inte
 	if d.HasChange("enable_anonymous_access") {
 		update = true
 	}
-	request["EnableAnonymousAccess"] = d.Get("enable_anonymous_access")
+	if v, ok := d.GetOkExists("enable_anonymous_access"); ok {
+        request["EnableAnonymousAccess"] = v
+    }
 
 	if d.HasChange("encrypt_data") {
 		update = true
 	}
-	request["EncryptData"] = d.Get("encrypt_data")
+	if v, ok := d.GetOkExists("encrypt_data"); ok {
+        request["EncryptData"] = v
+    }
 
 	if d.HasChange("reject_unencrypted_access") {
 		update = true
 	}
-	request["RejectUnencryptedAccess"] = d.Get("reject_unencrypted_access")
+	if v, ok := d.GetOkExists("reject_unencrypted_access"); ok {
+        request["RejectUnencryptedAccess"] = v
+    }
 
 	if d.HasChange("super_admin_sid") {
 		update = true
@@ -192,13 +190,7 @@ func resourceAlicloudNasSmbAclAttachmentRead(d *schema.ResourceData, meta interf
 		}
 		return WrapError(err)
 	}
-	parts, err := ParseResourceId(d.Id(), 3)
-	if err != nil {
-		return WrapError(err)
-	}
-	d.Set("file_system_id", parts[0])
-	d.Set("keytab", parts[1])
-	d.Set("keytab_md5", parts[2])
+	d.Set("file_system_id", d.Id())
 	d.Set("auth_method", fmt.Sprint(object["AuthMethod"]))
 	d.Set("enable_anonymous_access", fmt.Sprint(object["EnableAnonymousAccess"]))
 	d.Set("encrypt_data", fmt.Sprint(object["EncryptData"]))
@@ -217,13 +209,9 @@ func resourceAlicloudNasSmbAclAttachmentDelete(d *schema.ResourceData, meta inte
 	if err != nil {
 		return WrapError(err)
 	}
-	parts, err := ParseResourceId(d.Id(), 3)
-	if err != nil {
-		return WrapError(err)
-	}
 	request := map[string]interface{}{
 		"RegionId":     client.RegionId,
-		"FileSystemId": parts[0],
+		"FileSystemId": d.Id(),
 	}
 
 	wait := incrementalWait(3*time.Second, 3*time.Second)

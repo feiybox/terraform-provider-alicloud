@@ -56,15 +56,15 @@ The following arguments are supported:
 * `rw_access_type` - (Optional) Read-write permission type: `RDWR` (default), `RDONLY`.
 * `user_access_type` - (Optional) User permission type: `no_squash` (default), `root_squash`, `all_squash`.
 * `priority` - (Optional) Priority level. Range: 1-100. Default value: `1`.
-* `file_system_type` - (Optional) The type of the file system: `standard ` (default), `extreme`.
-* `ipv6_source_cidr_ip` - (Optional) The IPv6 address or CIDR block of the authorized object.
+* `file_system_type` - (Optional,Available in v1.185.0+) The type of the file system: `standard ` (default), `extreme`.
+* `ipv6_source_cidr_ip` - (Optional,Available in v1.185.0+) The IPv6 address or CIDR block of the authorized object.
                                      You must set this parameter to an IPv6 address or CIDR block.
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `id` - This ID of this resource. The value is formate as `<access_group_name>:<access rule id>`.
+* `id` - This ID of this resource. The value is formate as `<access_group_name>:<access_rule_id>:<file_system_type>`.
 * `access_rule_id` - The nas access rule ID.
 
 ## Import
@@ -72,6 +72,6 @@ The following attributes are exported:
 Nas Access Rule can be imported using the id, e.g.
 
 ```
-$ terraform import alicloud_nas_access_rule.foo tf-testAccNasConfigName:1
+$ terraform import alicloud_nas_access_rule.foo tf-testAccNasConfigName:1:standard
 ```
 

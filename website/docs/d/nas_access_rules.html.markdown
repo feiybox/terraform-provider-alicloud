@@ -38,8 +38,8 @@ The following arguments are supported:
 * `source_cidr_ip` - (Optional) Filter results by a specific SourceCidrIp. 
 * `user_access` - (Optional) Filter results by a specific UserAccess. 
 * `rw_access` - (Optional) Filter results by a specific RWAccess. 
-* `file_system_type` - (Optional) The type of the file system: `standard ` (default), `extreme`. 
-* `ipv6_source_cidr_ip` - (Optional) The IPv6 address or CIDR block of the authorized object.
+* `file_system_type` - (Optional,Available in v1.185.0+) The type of the file system: `standard ` (default), `extreme`. 
+* `ipv6_source_cidr_ip` - (Optional,Available in v1.185.0+) The IPv6 address or CIDR block of the authorized object.
                                                                You must set this parameter to an IPv6 address or CIDR block.
 * `output_file` - (Optional) File name where to save data source results (after running `terraform plan`).
 
@@ -47,7 +47,7 @@ The following arguments are supported:
 
 The following attributes are exported in addition to the arguments listed above:
 
-* `ids` - A list of rule IDs, Each element set to `access_rule_id` (Each element formats as `<access_group_name>:<access_rule_id>` before 1.53.0).
+* `ids` - A list of rule IDs, Each element set to `access_rule_id` (Each element formats as `<access_group_name>:<access_rule_id>:<access_rule_id>` before 1.53.0).
 * `rules` - A list of AccessRules. Each element contains the following attributes:
  * `source_cidr_ip` - SourceCidrIp of the AccessRule.
  * `priority` - Priority of the AccessRule.

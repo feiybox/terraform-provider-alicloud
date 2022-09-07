@@ -3,7 +3,7 @@ package alicloud
 import (
 	"fmt"
 	"time"
-
+    "strings"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 
 	"github.com/PaesslerAG/jsonpath"
@@ -141,17 +141,19 @@ func (s *NasService) DescribeNasAccessRule(id string) (object map[string]interfa
 		return nil, WrapError(err)
 	}
 	action := "DescribeAccessRules"
-	parts, err := ParseResourceId(id, 3)
-	if err != nil {
-		err = WrapError(err)
-		return
-	}
+
+	parts := strings.Split(id, ":")
 	request := map[string]interface{}{
-		"RegionId":        s.client.RegionId,
-		"AccessGroupName": parts[0],
-		"AccessRuleId":    parts[2],
-		"FileSystemType":  parts[1],
-	}
+        "RegionId":        s.client.RegionId,
+        "AccessGroupName": parts[0],
+        "AccessRuleId":    parts[1],
+    }
+    if len(parts) == 2 {
+        request["FileSystemType"] = "standard"
+    }else{
+        request["FileSystemType"] = parts[2]
+    }
+
 	runtime := util.RuntimeOptions{}
 	runtime.SetAutoretry(true)
 	response, err = conn.DoRequest(StringPointer(action), nil, StringPointer("POST"), StringPointer("2017-06-26"), StringPointer("AK"), nil, request, &runtime)
@@ -758,13 +760,9 @@ func (s *NasService) DescribeNasSmbAcl(id string) (object map[string]interface{}
 		return nil, WrapError(err)
 	}
 	action := "DescribeSmbAcl"
-	parts, err := ParseResourceId(id, 3)
-	if err != nil {
-		err = WrapError(err)
-		return
-	}
+
 	request := map[string]interface{}{
-		"FileSystemId": parts[0],
+		"FileSystemId": id,
 	}
 	runtime := util.RuntimeOptions{}
 	runtime.SetAutoretry(true)
