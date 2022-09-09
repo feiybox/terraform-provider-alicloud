@@ -24,7 +24,6 @@ resource "alicloud_nas_access_group" "foo" {
   access_group_name = "tf-NasConfigName"
   access_group_type = "Vpc"
   description       = "tf-testAccNasConfig"
-  file_system_type  = "extreme"
 }
 
 resource "alicloud_nas_access_rule" "foo" {
@@ -33,17 +32,8 @@ resource "alicloud_nas_access_rule" "foo" {
   rw_access_type    = "RDWR"
   user_access_type  = "no_squash"
   priority          = 2
-  file_system_type  = "extreme"
 }
 
-resource "alicloud_nas_access_rule" "foo1" {
-  access_group_name   = alicloud_nas_access_group.foo.access_group_name
-  ipv6_source_cidr_ip = "::1"
-  rw_access_type      = "RDWR"
-  user_access_type    = "no_squash"
-  priority            = 2
-  file_system_type    = "extreme"
-}
 
 ```
 
@@ -52,19 +42,16 @@ resource "alicloud_nas_access_rule" "foo1" {
 The following arguments are supported:
 
 * `access_group_name` - (Required, ForceNew) Permission group name.
-* `source_cidr_ip` - (Optional) Address or address segment.
+* `source_cidr_ip` - (Required) Address or address segment.
 * `rw_access_type` - (Optional) Read-write permission type: `RDWR` (default), `RDONLY`.
 * `user_access_type` - (Optional) User permission type: `no_squash` (default), `root_squash`, `all_squash`.
 * `priority` - (Optional) Priority level. Range: 1-100. Default value: `1`.
-* `file_system_type` - (Optional,Available in v1.185.0+) The type of the file system: `standard ` (default), `extreme`.
-* `ipv6_source_cidr_ip` - (Optional,Available in v1.185.0+) The IPv6 address or CIDR block of the authorized object.
-                                     You must set one of "ipv6_source_cidr_ip" and "source_cidr_ip".
 
 ## Attributes Reference
 
 The following attributes are exported:
 
-* `id` - This ID of this resource. The value is formate as `<access_group_name>:<access_rule_id>:<file_system_type>`.
+* `id` - This ID of this resource. The value is formate as `<access_group_name>:<access rule id>`.
 * `access_rule_id` - The nas access rule ID.
 
 ## Import
@@ -72,6 +59,6 @@ The following attributes are exported:
 Nas Access Rule can be imported using the id, e.g.
 
 ```
-$ terraform import alicloud_nas_access_rule.foo tf-testAccNasConfigName:1:standard
+$ terraform import alicloud_nas_access_rule.foo tf-testAccNasConfigName:1
 ```
 

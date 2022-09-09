@@ -46,14 +46,12 @@ func TestAccAlicloudNASAccessRule_basic(t *testing.T) {
 					"access_group_name": "${alicloud_nas_access_group.example.access_group_name}",
 					"source_cidr_ip":    "168.1.1.0/16",
 					"priority":          "1",
-					"file_system_type":  "extreme",
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheck(map[string]string{
 						"access_group_name": name,
 						"source_cidr_ip":    "168.1.1.0/16",
 						"priority":          "1",
-						"file_system_type":  "extreme",
 					}),
 				),
 			},
@@ -131,7 +129,6 @@ variable "name" {
 resource "alicloud_nas_access_group" "example" {
 	access_group_name = "${var.name}"
 	access_group_type = "Vpc"
-	file_system_type = "extreme"
 	}
 `, name)
 }
@@ -147,7 +144,6 @@ func TestUnitAlicloudNASAccessRule(t *testing.T) {
 		"priority":          1,
 		"rw_access_type":    "RDWR",
 		"user_access_type":  "no_squash",
-		"file_system_type":  "extreme",
 	} {
 		err := dCreate.Set(key, value)
 		assert.Nil(t, err)
@@ -264,7 +260,7 @@ func TestUnitAlicloudNASAccessRule(t *testing.T) {
 	})
 
 	// Set ID for Update and Delete Method
-	d.SetId(fmt.Sprint("MockAccessGroupName", ":", "file_system_type", ":", "MockAccessRuleId"))
+	d.SetId(fmt.Sprint("MockAccessGroupName", ":", "file_system_type"))
 	// Update
 	t.Run("UpdateClientAbnormal", func(t *testing.T) {
 		patches := gomonkey.ApplyMethod(reflect.TypeOf(&connectivity.AliyunClient{}), "NewNasClient", func(_ *connectivity.AliyunClient) (*client.Client, error) {
@@ -318,7 +314,7 @@ func TestUnitAlicloudNASAccessRule(t *testing.T) {
 
 	t.Run("UpdateModifyAccessRuleNormal", func(t *testing.T) {
 		diff := terraform.NewInstanceDiff()
-		for _, key := range []string{"source_cidr_ip", "rw_access_type", "user_access_type", "priority", "file_system_type"} {
+		for _, key := range []string{"source_cidr_ip", "rw_access_type", "user_access_type", "priority"} {
 			switch p["alicloud_nas_access_rule"].Schema[key].Type {
 			case schema.TypeString:
 				diff.SetAttribute(key, &terraform.ResourceAttrDiff{Old: d.Get(key).(string), New: d.Get(key).(string) + "_update"})
