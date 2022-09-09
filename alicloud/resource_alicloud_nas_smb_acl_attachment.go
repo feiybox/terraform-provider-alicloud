@@ -128,22 +128,22 @@ func resourceAlicloudNasSmbAclAttachmentUpdate(d *schema.ResourceData, meta inte
 		update = true
 	}
 	if v, ok := d.GetOkExists("enable_anonymous_access"); ok {
-		request["EnableAnonymousAccess"] = v
-	}
+        request["EnableAnonymousAccess"] = v
+    }
 
 	if d.HasChange("encrypt_data") {
 		update = true
 	}
 	if v, ok := d.GetOkExists("encrypt_data"); ok {
-		request["EncryptData"] = v
-	}
+        request["EncryptData"] = v
+    }
 
 	if d.HasChange("reject_unencrypted_access") {
 		update = true
 	}
 	if v, ok := d.GetOkExists("reject_unencrypted_access"); ok {
-		request["RejectUnencryptedAccess"] = v
-	}
+        request["RejectUnencryptedAccess"] = v
+    }
 
 	if d.HasChange("super_admin_sid") {
 		update = true
